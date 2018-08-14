@@ -1,15 +1,12 @@
-library(ggplot2)
 library(grid)
 library(codyn)
 library(lme4)
 library(MASS)
 library(vegan)
-library(plyr)
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 
 
-setwd('C:\\Users\\Kim\\Dropbox\\konza projects\\VI plots\\data\\analysis')
+setwd('C:\\Users\\lapie\\Dropbox (Smithsonian)\\konza projects\\VI plots\\data\\analysis')
 
 
 theme_set(theme_bw())
@@ -54,8 +51,9 @@ cover2013 <- read.csv('Vert_Invert_2013_cover.csv')
 cover2014 <- read.csv('Vert_Invert_2014_cover.csv')
 cover2015 <- read.csv('Vert_Invert_2015_cover.csv')
 cover2016 <- read.csv('Vert_Invert_2016_cover.csv')
+cover2017 <- read.csv('Vert_Invert_2017_cover.csv')
 
-cover <- rbind(cover2009, cover2010, cover2011, cover2012, cover2013, cover2014, cover2015, cover2016)%>%
+cover <- rbind(cover2009, cover2010, cover2011, cover2012, cover2013, cover2014, cover2015, cover2016, cover2017)%>%
   select(plot, sppnum, cover, season, year)%>%
   group_by(year, plot, sppnum)%>%
   summarise(cover=max(cover))%>%
