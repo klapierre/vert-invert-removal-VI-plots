@@ -52,8 +52,10 @@ cover2014 <- read.csv('Vert_Invert_2014_cover.csv')
 cover2015 <- read.csv('Vert_Invert_2015_cover.csv')
 cover2016 <- read.csv('Vert_Invert_2016_cover.csv')
 cover2017 <- read.csv('Vert_Invert_2017_cover.csv')
+cover2018 <- read.csv('Vert_Invert_2018_cover.csv')
+cover2019 <- read.csv('Vert_Invert_2019_cover.csv')
 
-cover <- rbind(cover2009, cover2010, cover2011, cover2012, cover2013, cover2014, cover2015, cover2016, cover2017)%>%
+cover <- rbind(cover2009, cover2010, cover2011, cover2012, cover2013, cover2014, cover2015, cover2016, cover2017, cover2018, cover2019)%>%
   select(plot, sppnum, cover, season, year)%>%
   group_by(year, plot, sppnum)%>%
   summarise(cover=max(cover))%>%
