@@ -92,8 +92,14 @@ biomass2019 <- read.csv('Vert_Invert_2019_biomass.csv')%>%
   mutate_all(~replace(., is.na(.), 0))%>%
   mutate(year=2019, total=(gram+forb+woody))%>%
   select(year, plot, subplot, gram, forb, woody, pdead, total)
+biomass2020 <- read.csv('Vert_Invert_2020_biomass.csv')%>%
+  mutate(drop=ifelse(plot==24&subplot==3, 1, 0))%>% #remove missing sample
+  filter(drop!=1)%>%
+  mutate_all(~replace(., is.na(.), 0))%>%
+  mutate(year=2020, total=(gram+forb+woody))%>%
+  select(year, plot, subplot, gram, forb, woody, pdead, total)
 
-biomass <- rbind(biomass2009, biomass2010, biomass2011, biomass2012, biomass2013, biomass2014, biomass2015, biomass2016, biomass2017, biomass2018, biomass2019)%>%
+biomass <- rbind(biomass2009, biomass2010, biomass2011, biomass2012, biomass2013, biomass2014, biomass2015, biomass2016, biomass2017, biomass2018, biomass2019, biomass2020)%>%
   select(year, plot, subplot, gram, forb, woody, pdead, total)%>%
   left_join(plan)
 
