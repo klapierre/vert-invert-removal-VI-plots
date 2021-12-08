@@ -211,3 +211,22 @@ ggplot(data=barGraphStats(data=subset(biomassMean, year<2019), variable="forb", 
   ylab(expression(paste('Forb Biomass (g m'^'-2',')'))) +
   theme(axis.title.x=element_blank(), axis.text.x=element_text(size=30, angle=90), axis.title.y=element_text(size=30, vjust=1, margin=margin(r=15)), axis.text.y=element_text(size=26), legend.position=c(0, 1), legend.justification=c(0,1))
 #export at 500x600
+
+
+##### recovery #####
+#time series
+ggplot(data=barGraphStats(data=subset(biomassMean, year>2017), variable="gram", byFactorNames=c("year", "trt")), aes(x=year, y=mean, color=trt)) +
+  geom_point(size=5) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.1, size=2) +
+  geom_line(position=position_dodge(0.1), size=2) +
+  ylab(expression(paste('Graminoid Biomass (g m'^'-2',')'))) +
+  theme(axis.title.x=element_blank(), axis.text.x=element_text(size=30, angle=90), axis.title.y=element_text(size=30, vjust=1, margin=margin(r=15)), axis.text.y=element_text(size=26), legend.position=c(0, 1), legend.justification=c(0,1))
+#export at 500x600
+
+ggplot(data=barGraphStats(data=subset(biomassMean, year>2017), variable="forb", byFactorNames=c("year", "trt")), aes(x=year, y=mean, color=trt)) +
+  geom_point(size=5) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.1, size=2) +
+  geom_line(position=position_dodge(0.1), size=2) +
+  ylab(expression(paste('Forb Biomass (g m'^'-2',')'))) +
+  theme(axis.title.x=element_blank(), axis.text.x=element_text(size=30, angle=90), axis.title.y=element_text(size=30, vjust=1, margin=margin(r=15)), axis.text.y=element_text(size=26), legend.position=c(0, 1), legend.justification=c(0,1))
+#export at 500x600
