@@ -5,6 +5,7 @@ library(emmeans)
 library(tidyverse)
 
 #NOTE: treatments run from 2009-2018, treatments ceased starting in 2019 to follow recovery
+#NOTE: biomass data has been through QA/QC checks through 2020 and outliers are confirmed to be true values
 
 #set path
 setwd('C:\\Users\\lapie\\Dropbox (Smithsonian)\\konza projects\\VI plots\\data\\analysis')
