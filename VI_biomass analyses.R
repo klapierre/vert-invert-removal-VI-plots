@@ -8,7 +8,7 @@ library(tidyverse)
 #NOTE: biomass data has been through QA/QC checks through 2020 and outliers are confirmed to be true values
 
 #set path
-setwd('C:\\Users\\lapie\\Dropbox (Smithsonian)\\konza projects\\VI plots\\data\\analysis')
+setwd('C:\\Users\\kjkomatsu\\Dropbox (Smithsonian)\\konza projects\\VI plots\\data\\analysis')
 
 
 #set options
@@ -99,8 +99,12 @@ biomass2020 <- read.csv('Vert_Invert_2020_biomass.csv')%>%
   mutate_all(~replace(., is.na(.), 0))%>%
   mutate(year=2020, total=(gram+forb+woody))%>%
   select(year, plot, subplot, gram, forb, woody, pdead, total)
+biomass2021 <- read.csv('Vert_Invert_2021_biomass.csv')%>%
+  mutate(year=2021, total=(gram+forb+woody))%>%
+  select(year, plot, subplot, gram, forb, woody, pdead, total)%>%
+  filter(plot!='NA')
 
-biomass <- rbind(biomass2009, biomass2010, biomass2011, biomass2012, biomass2013, biomass2014, biomass2015, biomass2016, biomass2017, biomass2018, biomass2019, biomass2020)%>%
+biomass <- rbind(biomass2009, biomass2010, biomass2011, biomass2012, biomass2013, biomass2014, biomass2015, biomass2016, biomass2017, biomass2018, biomass2019, biomass2020, biomass2021)%>%
   select(year, plot, subplot, gram, forb, woody, pdead, total)%>%
   left_join(plan)
 
@@ -215,8 +219,47 @@ ggplot(data=barGraphStats(data=subset(biomassMean, year<2019), variable="forb", 
 
 
 ##### recovery #####
+#mixed models
+
+#total biomass
+summary(biomassTrtYrs <- lme(total~NPK*insecticide*year,
+                             data=subset(biomassMean, year>2017),
+                             random=~1|plot,
+                             correlation=corCompSymm(form=~year|plot), 
+                             control=lmeControl(returnObject=T)))
+anova.lme(biomassTrtYrs, type='sequential') 
+emmeans(biomassTrtYrs, pairwise~NPK*insecticide*year, adjust="tukey")
+
+#grass biomass
+summary(gramTrtYrs <- lme(gram~NPK*insecticide*year,
+                          data=subset(biomassMean, year>2017),
+                          random=~1|plot,
+                          correlation=corCompSymm(form=~year|plot), 
+                          control=lmeControl(returnObject=T)))
+anova.lme(gramTrtYrs, type='sequential') 
+emmeans(gramTrtYrs, pairwise~NPK*insecticide*exclose, adjust="tukey")
+
+#forb biomass
+summary(forbTrtYrs <- lme(forb~NPK*insecticide*year,
+                          data=subset(biomassMean, year>2017),
+                          random=~1|plot,
+                          correlation=corCompSymm(form=~year|plot), 
+                          control=lmeControl(returnObject=T)))
+anova.lme(forbTrtYrs, type='sequential') 
+emmeans(forbTrtYrs, pairwise~NPK*insecticide*exclose, adjust="tukey")
+
+#forb:grass ratio
+summary(grassforbTrtYrs <- lme((forb/gram)~NPK*insecticide*year,
+                               data=subset(biomassMean, year>2017),
+                               random=~1|plot,
+                               correlation=corCompSymm(form=~year|plot), 
+                               control=lmeControl(returnObject=T)))
+anova.lme(grassforbTrtYrs, type='sequential') 
+emmeans(grassforbTrtYrs, pairwise~NPK*insecticide*exclose, adjust="tukey")
+
+
 #time series
-ggplot(data=barGraphStats(data=subset(biomassMean, year>2017), variable="gram", byFactorNames=c("year", "trt")), aes(x=year, y=mean, color=trt)) +
+ggplot(data=barGraphStats(data=subset(biomassMean, year>2017), variable="total", byFactorNames=c("year", "NPK", "insecticide")), aes(x=year, y=mean, color=interaction(NPK,insecticide))) +
   geom_point(size=5) +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.1, size=2) +
   geom_line(position=position_dodge(0.1), size=2) +
@@ -224,7 +267,16 @@ ggplot(data=barGraphStats(data=subset(biomassMean, year>2017), variable="gram", 
   theme(axis.title.x=element_blank(), axis.text.x=element_text(size=30, angle=90), axis.title.y=element_text(size=30, vjust=1, margin=margin(r=15)), axis.text.y=element_text(size=26), legend.position=c(0, 1), legend.justification=c(0,1))
 #export at 500x600
 
-ggplot(data=barGraphStats(data=subset(biomassMean, year>2017), variable="forb", byFactorNames=c("year", "trt")), aes(x=year, y=mean, color=trt)) +
+
+ggplot(data=barGraphStats(data=subset(biomassMean, year>2017), variable="gram", byFactorNames=c("year", "NPK", "insecticide")), aes(x=year, y=mean, color=interaction(NPK, insecticide))) +
+  geom_point(size=5) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.1, size=2) +
+  geom_line(position=position_dodge(0.1), size=2) +
+  ylab(expression(paste('Graminoid Biomass (g m'^'-2',')'))) +
+  theme(axis.title.x=element_blank(), axis.text.x=element_text(size=30, angle=90), axis.title.y=element_text(size=30, vjust=1, margin=margin(r=15)), axis.text.y=element_text(size=26), legend.position=c(0, 1), legend.justification=c(0,1))
+#export at 500x600
+
+ggplot(data=barGraphStats(data=subset(biomassMean, year>2017), variable="forb", byFactorNames=c("year", "NPK", "insecticide")), aes(x=year, y=mean, color=interaction(NPK,insecticide))) +
   geom_point(size=5) +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.1, size=2) +
   geom_line(position=position_dodge(0.1), size=2) +
